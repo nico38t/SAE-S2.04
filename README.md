@@ -14,4 +14,4 @@ Requette temoin : openfoodfacts=> SELECT url FROM openfoodfacts WHERE product_na
 
 2.2) Extraction et nettoyage 
 
-Enlever les erreur de data :  where code no in (select code where data_quality_errors_tags like '%%')
+Enlever les erreur de data :  where code not in (select code where data_quality_errors_tags like '%%')
