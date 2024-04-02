@@ -10,6 +10,7 @@ ______________________
 2.1) Exploration
 
 Requette temoin : openfoodfacts=> SELECT url FROM openfoodfacts WHERE product_name = 'jsp';
+
 __
 2.2) Extraction et nettoyage 
 
