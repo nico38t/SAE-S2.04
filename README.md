@@ -19,10 +19,10 @@ Enlever les erreur de data :  where code not in (select code where data_quality_
 
 Créé table temp
 
-create temp table openfoodclean
+create temp table openfoodclean as
 select  code, url, product_name,
         brands_tags, stores, owner, food_groups, labels_tags, countries,
         countries_tags, quantity, fat_100g, saturated_fat_100g, 
         sugars_100g, proteins_100g, carbohydrates_100g, energy_100g,
-        salt_100g, sodium_100g, nutriscore_score, nutriscore_grade 
+        salt_100g, sodium_100g, nutriscore_score, nutriscore_grade from openfoodfacts
         where code not in (select code where data_quality_errors_tags like '%%');
