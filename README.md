@@ -79,3 +79,7 @@ WHERE
     code NOT IN (SELECT code FROM openfoodfacts WHERE data_quality_errors_tags LIKE '%%')
 and countries in ('United States', 'us', 'US', 'usa', 'USA', 'Etats-Unis', 'États-Unis', 'united-states') 
 and food_groups = 'en:one-dish-meals';
+
+request tout les nom USA: 
+select distinct(countries) from openfoodfacts where countries_en ='United States';
+
