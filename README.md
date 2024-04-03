@@ -50,7 +50,7 @@ WHERE
 
 Table temp sans (DATA erreur) avec comme pays (United States, us, Etats-Unis, États-Unis, united-states ) et (en:one-dish-meals comme food_groups)
 
-CREATE TEMP TABLE openfoodclean2 AS 
+CREATE TEMP TABLE openfoodclean AS 
 SELECT 
     code, 
     url, 
@@ -76,9 +76,12 @@ SELECT
 FROM 
     openfoodfacts 
 WHERE 
-    code NOT IN (SELECT code FROM openfoodfacts WHERE data_quality_errors_tags LIKE '%%')
-and countries in ('United States', 'us', 'US', 'usa', 'USA', 'Etats-Unis', 'États-Unis', 'united-states') 
-and food_groups = 'en:one-dish-meals';
+    code NOT IN (SELECT code FROM openfoodfacts WHERE data_quality_errors_tags LIKE '%%') 
+    AND code is not null
+    AND char_length(code)=13
+    AND nutriscore_grade is not null
+    AND countries IN (SELECT DISTINCT(countries) FROM openfoodfacts WHERE countries_en = 'United States') 
+    AND food_groups = 'en:one-dish-meals';
 
 request tout les nom USA: 
 select distinct(countries) from openfoodfacts where countries_en ='United States';
