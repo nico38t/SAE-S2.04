@@ -83,6 +83,7 @@ WHERE
 --
 
 --source du calcule pour computed_energy = chat gpt
+-- creation d'une table ne contenant que les information qui nous interesse
 CREATE TEMP TABLE openfoodclean AS 
 SELECT 
     code, 
@@ -106,7 +107,43 @@ SELECT
     sodium_100g, 
     nutriscore_score, 
     nutriscore_grade, 
-    (proteins_100g*4)+(carbohydrates_100g*4)+(fat_100g*9) AS computed_energy_100g
+    (proteins_100g*4)+(carbohydrates_100g*4)+(fat_100g*9) AS computed_energy_100g,
+    CASE 
+       WHEN labels_tags LIKE '%organic%' THEN TRUE
+       WHEN labels_tags = '' THEN NULL
+       ELSE FALSE
+    END AS organic,
+    CASE 
+        WHEN ingredients_analysis_tags LIKE '%en:vegan%' THEN TRUE
+        WHEN ingredients_analysis_tags = '' THEN NULL
+        ELSE FALSE
+    END AS vegan,  
+    CASE
+        WHEN ingredients_analysis_tags LIKE '%en:vegetarian%' THEN TRUE
+        WHEN ingredients_analysis_tags = '' THEN NULL
+    END AS vegetarian,
+    CASE
+        WHEN ingredients_analysis_tags LIKE '%en:palm_oil%' THEN TRUE
+        WHEN ingredients_analysis_tags = '' THEN NULL
+    END AS palm_oil,
+    CASE
+        WHEN nutrient_levels_tags ~* 'en:fat-in-high-quantity' THEN 'h'
+        WHEN nutrient_levels_tags ~* 'en:fat-moderate-quantity' THEN 'm'
+        WHEN nutrient_levels_tags ~* 'en:fat-low-quantity' THEN 'l'
+        ELSE NULL
+    END AS fat_levels,
+    CASE
+        WHEN nutrient_levels_tags ~* 'en:sugars-in-high-quantity' THEN 'h'
+        WHEN nutrient_levels_tags ~* 'en:sugars-moderate-quantity' THEN 'm'
+        WHEN nutrient_levels_tags ~* 'en:sugars-low-quantity' THEN 'l'
+        ELSE NULL
+    END AS sugars_levels,
+    CASE
+        WHEN nutrient_levels_tags ~* 'en:salt-in-high-quantity' THEN 'h'
+        WHEN nutrient_levels_tags ~* 'en:salt-moderate-quantity' THEN 'm'
+        WHEN nutrient_levels_tags ~* 'en:salt-low-quantity' THEN 'l'
+        ELSE NULL
+    END AS salt_levels
 
 FROM 
     openfoodfacts
@@ -125,6 +162,16 @@ WHERE
     AND countries IN (SELECT DISTINCT(countries) FROM openfoodfacts WHERE countries_en = 'United States') 
     AND food_groups = 'en:one-dish-meals';
 
+
+
+-- pour trouver les aliments BIO
+SELECT product_name,
+       CASE 
+        WHEN ingredients_analysis_tags LIKE '%en:vegan%' THEN TRUE
+        WHEN ingredients_analysis_tags = '' THEN NULL
+        ELSE FALSE
+    END AS vegan
+FROM openfoodclean;
 
 
 /*
